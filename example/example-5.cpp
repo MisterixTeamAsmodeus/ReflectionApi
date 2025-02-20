@@ -24,10 +24,10 @@ void visitAllProperty(ClassType&& visitor, Entity&& entity, PropertyAction&& pro
 
     entity.for_each(Visitor::make_any_property_visitor(
         [&](const auto& property) {
-            property_action(visitor, property);
+            property_action(std::forward<ClassType>(visitor), std::forward<decltype(property)>(property));
         },
         [&](const auto& reference_property) {
-            visitAllProperty(reference_property.value(visitor), reference_property.entity(), property_action);
+            visitAllProperty(reference_property.value(std::forward<ClassType>(visitor)), reference_property.entity(), std::forward<PropertyAction>(property_action));
         }));
 }
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "helper/typehelper/templates.h"
+#include "helper/templates.h"
 #include "reflectionapi_global.h"
 
 #include <string>
@@ -9,8 +9,8 @@ namespace ReflectionApi {
 
 template<typename ClassType,
     typename PropertyType,
-    typename Setter = Helper::TypeHelper::Setter_t<ClassType, PropertyType>,
-    typename Getter = Helper::TypeHelper::ConstGetter_t<ClassType, PropertyType>>
+    typename Setter = Helper::Setter_t<ClassType, PropertyType>,
+    typename Getter = Helper::ConstGetter_t<ClassType, PropertyType>>
 class REFLECTIONAPI_EXPORT Property
 {
 public:
@@ -26,7 +26,7 @@ public:
      * @param variable Указатель на член-переменную.
      * @param name Имя переменной.
      */
-    explicit Property(std::string name, const Helper::TypeHelper::Variable_t<ClassType, PropertyType> variable)
+    explicit Property(std::string name, const Helper::Variable_t<ClassType, PropertyType> variable)
         : _name(std::move(name))
         , _variable(variable)
     {
@@ -84,7 +84,6 @@ public:
         return *this;
     }
 
-private:
     /**
      * @brief Устанавливает значение переменной.
      *
@@ -105,7 +104,7 @@ private:
      * @param classValue Объект, в котором находится переменная.
      * @return Значение переменной.
      */
-    decltype(auto) value(const ClassType& classValue) const
+    PropertyType value(const ClassType& classValue) const
     {
         return _variable == nullptr ? (classValue.*_getter)() : classValue.*_variable;
     }
@@ -130,7 +129,7 @@ private:
      * @brief Указатель на член-переменную, связанный с этой переменной.
      * Если указатель равен nullptr, то переменная связана с указателями на члены-функции.
      */
-    Helper::TypeHelper::Variable_t<ClassType, PropertyType> _variable = nullptr;
+    Helper::Variable_t<ClassType, PropertyType> _variable = nullptr;
 
     /**
      * @brief Указатель на член-функцию, получающий значение переменной.
@@ -148,7 +147,7 @@ private:
 template<typename ClassType, typename PropertyType>
 auto REFLECTIONAPI_EXPORT make_property(
     std::string name,
-    Helper::TypeHelper::Variable_t<ClassType, PropertyType>&& variable)
+    Helper::Variable_t<ClassType, PropertyType>&& variable)
 {
     return Property<ClassType, PropertyType>(
         std::move(name),
@@ -158,8 +157,8 @@ auto REFLECTIONAPI_EXPORT make_property(
 template<typename ClassType, typename PropertyType>
 auto REFLECTIONAPI_EXPORT make_property(
     std::string name,
-    Helper::TypeHelper::Setter_t<ClassType, PropertyType>&& setter,
-    Helper::TypeHelper::ConstGetter_t<ClassType, PropertyType>&& getter)
+    Helper::Setter_t<ClassType, PropertyType>&& setter,
+    Helper::ConstGetter_t<ClassType, PropertyType>&& getter)
 {
     return Property<ClassType, PropertyType, decltype(setter), decltype(getter)>(
         std::move(name),
@@ -170,8 +169,8 @@ auto REFLECTIONAPI_EXPORT make_property(
 template<typename ClassType, typename PropertyType>
 auto REFLECTIONAPI_EXPORT make_property(
     std::string name,
-    Helper::TypeHelper::Setter_t<ClassType, PropertyType>&& setter,
-    Helper::TypeHelper::MutableGetter_t<ClassType, PropertyType>&& getter)
+    Helper::Setter_t<ClassType, PropertyType>&& setter,
+    Helper::MutableGetter_t<ClassType, PropertyType>&& getter)
 {
     return Property<ClassType, PropertyType, decltype(setter), decltype(getter)>(
         std::move(name),
@@ -182,8 +181,8 @@ auto REFLECTIONAPI_EXPORT make_property(
 template<typename ClassType, typename PropertyType>
 auto REFLECTIONAPI_EXPORT make_property(
     std::string name,
-    Helper::TypeHelper::Setter_t<ClassType, PropertyType>&& setter,
-    Helper::TypeHelper::Getter_t<ClassType, PropertyType>&& getter)
+    Helper::Setter_t<ClassType, PropertyType>&& setter,
+    Helper::Getter_t<ClassType, PropertyType>&& getter)
 {
     return Property<ClassType, PropertyType, decltype(setter), decltype(getter)>(
         std::move(name),
@@ -196,8 +195,8 @@ auto REFLECTIONAPI_EXPORT make_property(
 template<typename ClassType, typename PropertyType>
 auto REFLECTIONAPI_EXPORT make_property(
     std::string name,
-    Helper::TypeHelper::BaseSetter_t<ClassType, PropertyType>&& setter,
-    Helper::TypeHelper::ConstGetter_t<ClassType, PropertyType>&& getter)
+    Helper::BaseSetter_t<ClassType, PropertyType>&& setter,
+    Helper::ConstGetter_t<ClassType, PropertyType>&& getter)
 {
     return Property<ClassType, PropertyType, decltype(setter), decltype(getter)>(
         std::move(name),
@@ -208,8 +207,8 @@ auto REFLECTIONAPI_EXPORT make_property(
 template<typename ClassType, typename PropertyType>
 auto REFLECTIONAPI_EXPORT make_property(
     std::string name,
-    Helper::TypeHelper::BaseSetter_t<ClassType, PropertyType>&& setter,
-    Helper::TypeHelper::MutableGetter_t<ClassType, PropertyType>&& getter)
+    Helper::BaseSetter_t<ClassType, PropertyType>&& setter,
+    Helper::MutableGetter_t<ClassType, PropertyType>&& getter)
 {
     return Property<ClassType, PropertyType, decltype(setter), decltype(getter)>(
         std::move(name),
@@ -220,8 +219,8 @@ auto REFLECTIONAPI_EXPORT make_property(
 template<typename ClassType, typename PropertyType>
 auto REFLECTIONAPI_EXPORT make_property(
     std::string name,
-    Helper::TypeHelper::BaseSetter_t<ClassType, PropertyType>&& setter,
-    Helper::TypeHelper::Getter_t<ClassType, PropertyType>&& getter)
+    Helper::BaseSetter_t<ClassType, PropertyType>&& setter,
+    Helper::Getter_t<ClassType, PropertyType>&& getter)
 {
     return Property<ClassType, PropertyType, decltype(setter), decltype(getter)>(
         std::move(name),

@@ -2,7 +2,6 @@
 
 namespace ReflectionApi {
 namespace Helper {
-namespace TypeHelper {
 
 /**
  * @brief Шаблонные псевдонимы типа для указателей на члены-функции, возвращающие значения.
@@ -63,6 +62,5 @@ using BaseSetter_t = void (ClassType::*)(Params);
 template<typename ClassType, typename ColumnType>
 using Variable_t = ColumnType ClassType::*;
 
-} // namespace TypeHelper
-} // namespace Helpers
+} // namespace Helper
 } // namespace ReflectionApi

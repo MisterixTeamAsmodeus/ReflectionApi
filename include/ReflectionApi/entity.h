@@ -52,11 +52,19 @@ public:
     template<typename Action>
     void visit_property(const std::string& property_name, Action&& action)
     {
-        return Helper::perform_if(
+        Helper::perform_if(
             _properties,
             [&](const auto& column) {
                 return column.name() == property_name;
             },
+            std::forward<Action>(action));
+    }
+
+    template<typename Action>
+    void for_each(Action&& action)
+    {
+        Helper::for_each(
+            _properties,
             std::forward<Action>(action));
     }
 

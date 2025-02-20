@@ -53,6 +53,8 @@ public:
     {
     }
 
+    ~ReferenceProperty() override = default;
+
     ReferenceProperty& operator=(const ReferenceProperty& other)
     {
         if(this == &other)
@@ -71,11 +73,6 @@ public:
         return *this;
     }
 
-    Entity<ReferenceColumnType, ReferenceProperties...>& mutable_entity()
-    {
-        return _entity;
-    }
-
     Entity<ReferenceColumnType, ReferenceProperties...> entity() const
     {
         return _entity;
@@ -89,14 +86,14 @@ template<typename ClassType,
     typename PropertyType,
     typename ReferenceColumnType,
     typename... ReferenceProperties>
-auto REFLECTIONAPI_EXPORT make_property(
+auto REFLECTIONAPI_EXPORT make_reference_property(
     std::string name,
     Helper::Variable_t<ClassType, PropertyType>&& variable,
     Entity<ReferenceColumnType, ReferenceProperties...> reference_entity)
 {
-    return ReferenceProperty<ClassType, PropertyType, ReferenceColumnType, void*, void*, ReferenceProperties...>(
+    return ReferenceProperty<ClassType, PropertyType, ReferenceColumnType, Helper::Setter_t<ClassType, PropertyType>, Helper::ConstGetter_t<ClassType, PropertyType>, ReferenceProperties...>(
         std::move(name),
-        std::forward<decltype(variable)>(variable),
+        std::forward<Helper::Variable_t<ClassType, PropertyType>>(variable),
         std::move(reference_entity));
 }
 
@@ -104,16 +101,16 @@ template<typename ClassType,
     typename PropertyType,
     typename ReferenceColumnType,
     typename... ReferenceProperties>
-auto REFLECTIONAPI_EXPORT make_property(
+auto REFLECTIONAPI_EXPORT make_reference_property(
     std::string name,
     Helper::Setter_t<ClassType, PropertyType>&& setter,
     Helper::ConstGetter_t<ClassType, PropertyType>&& getter,
     Entity<ReferenceColumnType, ReferenceProperties...> reference_entity)
 {
-    return ReferenceProperty<ClassType, PropertyType, ReferenceColumnType, decltype(setter), decltype(getter), ReferenceProperties...>(
+    return ReferenceProperty<ClassType, PropertyType, ReferenceColumnType, Helper::Setter_t<ClassType, PropertyType>, Helper::ConstGetter_t<ClassType, PropertyType>, ReferenceProperties...>(
         std::move(name),
-        std::forward<decltype(setter)>(setter),
-        std::forward<decltype(getter)>(getter),
+        std::forward<Helper::Setter_t<ClassType, PropertyType>>(setter),
+        std::forward<Helper::ConstGetter_t<ClassType, PropertyType>>(getter),
         std::move(reference_entity));
 }
 
@@ -121,16 +118,16 @@ template<typename ClassType,
     typename PropertyType,
     typename ReferenceColumnType,
     typename... ReferenceProperties>
-auto REFLECTIONAPI_EXPORT make_property(
+auto REFLECTIONAPI_EXPORT make_reference_property(
     std::string name,
     Helper::Setter_t<ClassType, PropertyType>&& setter,
     Helper::MutableGetter_t<ClassType, PropertyType>&& getter,
     Entity<ReferenceColumnType, ReferenceProperties...> reference_entity)
 {
-    return ReferenceProperty<ClassType, PropertyType, ReferenceColumnType, decltype(setter), decltype(getter), ReferenceProperties...>(
+    return ReferenceProperty<ClassType, PropertyType, ReferenceColumnType, Helper::Setter_t<ClassType, PropertyType>, Helper::MutableGetter_t<ClassType, PropertyType>, ReferenceProperties...>(
         std::move(name),
-        std::forward<decltype(setter)>(setter),
-        std::forward<decltype(getter)>(getter),
+        std::forward<Helper::Setter_t<ClassType, PropertyType>>(setter),
+        std::forward<Helper::MutableGetter_t<ClassType, PropertyType>>(getter),
         std::move(reference_entity));
 }
 
@@ -138,16 +135,16 @@ template<typename ClassType,
     typename PropertyType,
     typename ReferenceColumnType,
     typename... ReferenceProperties>
-auto REFLECTIONAPI_EXPORT make_property(
+auto REFLECTIONAPI_EXPORT make_reference_property(
     std::string name,
     Helper::Setter_t<ClassType, PropertyType> setter,
     Helper::Getter_t<ClassType, PropertyType> getter,
     Entity<ReferenceColumnType, ReferenceProperties...> reference_entity)
 {
-    return ReferenceProperty<ClassType, PropertyType, ReferenceColumnType, decltype(setter), decltype(getter), ReferenceProperties...>(
+    return ReferenceProperty<ClassType, PropertyType, ReferenceColumnType, Helper::Setter_t<ClassType, PropertyType>, Helper::Getter_t<ClassType, PropertyType>, ReferenceProperties...>(
         std::move(name),
-        std::forward<decltype(setter)>(setter),
-        std::forward<decltype(getter)>(getter),
+        std::forward<Helper::Setter_t<ClassType, PropertyType>>(setter),
+        std::forward<Helper::Getter_t<ClassType, PropertyType>>(getter),
         std::move(reference_entity));
 }
 
@@ -157,16 +154,16 @@ template<typename ClassType,
     typename PropertyType,
     typename ReferenceColumnType,
     typename... ReferenceProperties>
-auto REFLECTIONAPI_EXPORT make_property(
+auto REFLECTIONAPI_EXPORT make_reference_property(
     std::string name,
     Helper::BaseSetter_t<ClassType, PropertyType>&& setter,
     Helper::ConstGetter_t<ClassType, PropertyType>&& getter,
     Entity<ReferenceColumnType, ReferenceProperties...> reference_entity)
 {
-    return ReferenceProperty<ClassType, PropertyType, ReferenceColumnType, decltype(setter), decltype(getter), ReferenceProperties...>(
+    return ReferenceProperty<ClassType, PropertyType, ReferenceColumnType, Helper::BaseSetter_t<ClassType, PropertyType>, Helper::ConstGetter_t<ClassType, PropertyType>, ReferenceProperties...>(
         std::move(name),
-        std::forward<decltype(setter)>(setter),
-        std::forward<decltype(getter)>(getter),
+        std::forward<Helper::BaseSetter_t<ClassType, PropertyType>>(setter),
+        std::forward<Helper::ConstGetter_t<ClassType, PropertyType>>(getter),
         std::move(reference_entity));
 }
 
@@ -174,16 +171,16 @@ template<typename ClassType,
     typename PropertyType,
     typename ReferenceColumnType,
     typename... ReferenceProperties>
-auto REFLECTIONAPI_EXPORT make_property(
+auto REFLECTIONAPI_EXPORT make_reference_property(
     std::string name,
     Helper::BaseSetter_t<ClassType, PropertyType>&& setter,
     Helper::MutableGetter_t<ClassType, PropertyType>&& getter,
     Entity<ReferenceColumnType, ReferenceProperties...> reference_entity)
 {
-    return ReferenceProperty<ClassType, PropertyType, ReferenceColumnType, decltype(setter), decltype(getter), ReferenceProperties...>(
+    return ReferenceProperty<ClassType, PropertyType, ReferenceColumnType, Helper::BaseSetter_t<ClassType, PropertyType>, Helper::MutableGetter_t<ClassType, PropertyType>, ReferenceProperties...>(
         std::move(name),
-        std::forward<decltype(setter)>(setter),
-        std::forward<decltype(getter)>(getter),
+        std::forward<Helper::BaseSetter_t<ClassType, PropertyType>>(setter),
+        std::forward<Helper::MutableGetter_t<ClassType, PropertyType>>(getter),
         std::move(reference_entity));
 }
 
@@ -191,16 +188,16 @@ template<typename ClassType,
     typename PropertyType,
     typename ReferenceColumnType,
     typename... ReferenceProperties>
-auto REFLECTIONAPI_EXPORT make_property(
+auto REFLECTIONAPI_EXPORT make_reference_property(
     std::string name,
     Helper::BaseSetter_t<ClassType, PropertyType> setter,
     Helper::Getter_t<ClassType, PropertyType> getter,
     Entity<ReferenceColumnType, ReferenceProperties...> reference_entity)
 {
-    return ReferenceProperty<ClassType, PropertyType, ReferenceColumnType, decltype(setter), decltype(getter), ReferenceProperties...>(
+    return ReferenceProperty<ClassType, PropertyType, ReferenceColumnType, Helper::BaseSetter_t<ClassType, PropertyType>, Helper::Getter_t<ClassType, PropertyType>, ReferenceProperties...>(
         std::move(name),
-        std::forward<decltype(setter)>(setter),
-        std::forward<decltype(getter)>(getter),
+        std::forward<Helper::BaseSetter_t<ClassType, PropertyType>>(setter),
+        std::forward<Helper::Getter_t<ClassType, PropertyType>>(getter),
         std::move(reference_entity));
 }
 

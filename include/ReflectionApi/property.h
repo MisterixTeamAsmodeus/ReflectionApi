@@ -62,6 +62,8 @@ public:
     {
     }
 
+    virtual ~Property() = default;
+
     Property& operator=(const Property& other)
     {
         if(this == &other)
@@ -151,7 +153,7 @@ auto REFLECTIONAPI_EXPORT make_property(
 {
     return Property<ClassType, PropertyType>(
         std::move(name),
-        std::forward<decltype(variable)>(variable));
+        std::forward<Helper::Variable_t<ClassType, PropertyType>>(variable));
 }
 
 template<typename ClassType, typename PropertyType>
@@ -160,10 +162,10 @@ auto REFLECTIONAPI_EXPORT make_property(
     Helper::Setter_t<ClassType, PropertyType>&& setter,
     Helper::ConstGetter_t<ClassType, PropertyType>&& getter)
 {
-    return Property<ClassType, PropertyType, decltype(setter), decltype(getter)>(
+    return Property<ClassType, PropertyType>(
         std::move(name),
-        std::forward<decltype(setter)>(setter),
-        std::forward<decltype(getter)>(getter));
+        std::forward<Helper::Setter_t<ClassType, PropertyType>>(setter),
+        std::forward<Helper::ConstGetter_t<ClassType, PropertyType>>(getter));
 }
 
 template<typename ClassType, typename PropertyType>
@@ -172,10 +174,10 @@ auto REFLECTIONAPI_EXPORT make_property(
     Helper::Setter_t<ClassType, PropertyType>&& setter,
     Helper::MutableGetter_t<ClassType, PropertyType>&& getter)
 {
-    return Property<ClassType, PropertyType, decltype(setter), decltype(getter)>(
+    return Property<ClassType, PropertyType, Helper::Setter_t<ClassType, PropertyType>, Helper::MutableGetter_t<ClassType, PropertyType>>(
         std::move(name),
-        std::forward<decltype(setter)>(setter),
-        std::forward<decltype(getter)>(getter));
+        std::forward<Helper::Setter_t<ClassType, PropertyType>>(setter),
+        std::forward<Helper::MutableGetter_t<ClassType, PropertyType>>(getter));
 }
 
 template<typename ClassType, typename PropertyType>
@@ -184,10 +186,10 @@ auto REFLECTIONAPI_EXPORT make_property(
     Helper::Setter_t<ClassType, PropertyType>&& setter,
     Helper::Getter_t<ClassType, PropertyType>&& getter)
 {
-    return Property<ClassType, PropertyType, decltype(setter), decltype(getter)>(
+    return Property<ClassType, PropertyType, Helper::Setter_t<ClassType, PropertyType>, Helper::Getter_t<ClassType, PropertyType>>(
         std::move(name),
-        std::forward<decltype(setter)>(setter),
-        std::forward<decltype(getter)>(getter));
+        std::forward<Helper::Setter_t<ClassType, PropertyType>>(setter),
+        std::forward<Helper::Getter_t<ClassType, PropertyType>>(getter));
 }
 
 //-----------------------------Перегрузки для примитивов, где параметры в setter не по const &-----------------------------------
@@ -198,10 +200,10 @@ auto REFLECTIONAPI_EXPORT make_property(
     Helper::BaseSetter_t<ClassType, PropertyType>&& setter,
     Helper::ConstGetter_t<ClassType, PropertyType>&& getter)
 {
-    return Property<ClassType, PropertyType, decltype(setter), decltype(getter)>(
+    return Property<ClassType, PropertyType, Helper::BaseSetter_t<ClassType, PropertyType>, Helper::ConstGetter_t<ClassType, PropertyType>>(
         std::move(name),
-        std::forward<decltype(setter)>(setter),
-        std::forward<decltype(getter)>(getter));
+        std::forward<Helper::BaseSetter_t<ClassType, PropertyType>>(setter),
+        std::forward<Helper::ConstGetter_t<ClassType, PropertyType>>(getter));
 }
 
 template<typename ClassType, typename PropertyType>
@@ -210,10 +212,10 @@ auto REFLECTIONAPI_EXPORT make_property(
     Helper::BaseSetter_t<ClassType, PropertyType>&& setter,
     Helper::MutableGetter_t<ClassType, PropertyType>&& getter)
 {
-    return Property<ClassType, PropertyType, decltype(setter), decltype(getter)>(
+    return Property<ClassType, PropertyType, Helper::BaseSetter_t<ClassType, PropertyType>, Helper::MutableGetter_t<ClassType, PropertyType>>(
         std::move(name),
-        std::forward<decltype(setter)>(setter),
-        std::forward<decltype(getter)>(getter));
+        std::forward<Helper::BaseSetter_t<ClassType, PropertyType>>(setter),
+        std::forward<Helper::MutableGetter_t<ClassType, PropertyType>>(getter));
 }
 
 template<typename ClassType, typename PropertyType>
@@ -222,10 +224,10 @@ auto REFLECTIONAPI_EXPORT make_property(
     Helper::BaseSetter_t<ClassType, PropertyType>&& setter,
     Helper::Getter_t<ClassType, PropertyType>&& getter)
 {
-    return Property<ClassType, PropertyType, decltype(setter), decltype(getter)>(
+    return Property<ClassType, PropertyType, Helper::BaseSetter_t<ClassType, PropertyType>, Helper::Getter_t<ClassType, PropertyType>>(
         std::move(name),
-        std::forward<decltype(setter)>(setter),
-        std::forward<decltype(getter)>(getter));
+        std::forward<Helper::BaseSetter_t<ClassType, PropertyType>>(setter),
+        std::forward<Helper::Getter_t<ClassType, PropertyType>>(getter));
 }
 
 } // namespace ReflectionApi

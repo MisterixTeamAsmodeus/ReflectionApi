@@ -41,7 +41,7 @@ using Getter_t = ColumnType (ClassType::*)();
  * @tparam Params Тип параметра, который принимает член-функция. По умолчанию это const ColumnType &.
  */
 template<typename ClassType, typename ColumnType, typename Params = const ColumnType&>
-using Setter_t = void (ClassType::*)(Params);
+using Setter_t = void (ClassType::*)(const Params&);
 
 /**
  * @brief Шаблонные псевдонимы типа для указателей на члены-функции, устанавливающие значение.

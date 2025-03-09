@@ -1,7 +1,6 @@
 #pragma once
 
 #include "helper/tuplealgoritm.h"
-#include "reflectionapi_global.h"
 
 #include <string>
 #include <tuple>
@@ -9,7 +8,7 @@
 namespace ReflectionApi {
 
 template<typename ClassType, typename... Properties>
-class REFLECTIONAPI_EXPORT Entity
+class Entity
 {
 public:
     static ClassType empty_entity()
@@ -73,7 +72,7 @@ private:
 };
 
 template<typename ClassType, typename... Properties>
-auto REFLECTIONAPI_EXPORT make_entity(Properties&&... properties)
+auto make_entity(Properties&&... properties)
 {
     return Entity<ClassType, Properties...>(std::move(properties)...);
 }

@@ -6,11 +6,19 @@ namespace ReflectionApi {
 namespace Visitor {
 
 template<typename ReferencePropertyAction>
-class REFLECTIONAPI_EXPORT ReferencePropertyVisitor
+class ReferencePropertyVisitor
 {
 public:
     explicit ReferencePropertyVisitor(const ReferencePropertyAction& reference_property_action)
         : _reference_property_action(reference_property_action)
+    {
+    }
+
+    template<typename ClassType,
+        typename PropertyType,
+        typename Setter,
+        typename Getter>
+    void operator()(Property<ClassType, PropertyType, Setter, Getter>& property)
     {
     }
 
@@ -30,7 +38,7 @@ private:
 };
 
 template<typename ReferencePropertyAction>
-auto REFLECTIONAPI_EXPORT make_reference_property_visitor(ReferencePropertyAction&& reference_property_action)
+auto make_reference_property_visitor(ReferencePropertyAction&& reference_property_action)
 {
     return ReferencePropertyVisitor<ReferencePropertyAction>(std::forward<ReferencePropertyAction>(reference_property_action));
 }

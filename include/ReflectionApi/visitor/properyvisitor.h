@@ -1,12 +1,13 @@
 #pragma once
 
 #include "ReflectionApi/property.h"
+#include "ReflectionApi/referenceproperty.h"
 
 namespace ReflectionApi {
 namespace Visitor {
 
 template<typename PropertyAction>
-class REFLECTIONAPI_EXPORT PropertyVisitor
+class PropertyVisitor
 {
 public:
     explicit PropertyVisitor(const PropertyAction& property_action)
@@ -23,14 +24,24 @@ public:
         _property_action(property);
     }
 
+    template<typename ClassType,
+        typename PropertyType,
+        typename ReferenceColumnType,
+        typename Setter,
+        typename Getter,
+        typename... ReferenceProperties>
+    void operator()(ReferenceProperty<ClassType, PropertyType, ReferenceColumnType, Setter, Getter, ReferenceProperties...>& reference_property)
+    {
+    }
+
 private:
     PropertyAction _property_action;
 };
 
 template<typename PropertyAction>
-auto REFLECTIONAPI_EXPORT make_property_visitor(PropertyAction&& property_action)
+auto make_property_visitor(PropertyAction&& property_action)
 {
-    return ProperyVisitor<PropertyAction>(std::forward<PropertyAction>(property_action));
+    return PropertyVisitor<PropertyAction>(std::forward<PropertyAction>(property_action));
 }
 
 } // namespace Visitor

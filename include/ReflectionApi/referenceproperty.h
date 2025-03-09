@@ -3,7 +3,6 @@
 #include "entity.h"
 #include "helper/templates.h"
 #include "property.h"
-#include "reflectionapi_global.h"
 
 namespace ReflectionApi {
 
@@ -13,7 +12,7 @@ template<typename ClassType,
     typename Setter,
     typename Getter,
     typename... ReferenceProperties>
-class REFLECTIONAPI_EXPORT ReferenceProperty final : public Property<ClassType, PropertyType, Setter, Getter>
+class ReferenceProperty final : public Property<ClassType, PropertyType, Setter, Getter>
 {
 public:
     static PropertyType get_empty_reference_variable()
@@ -86,7 +85,7 @@ template<typename ClassType,
     typename PropertyType,
     typename ReferenceColumnType,
     typename... ReferenceProperties>
-auto REFLECTIONAPI_EXPORT make_reference_property(
+auto make_reference_property(
     std::string name,
     Helper::Variable_t<ClassType, PropertyType>&& variable,
     Entity<ReferenceColumnType, ReferenceProperties...> reference_entity)
@@ -101,7 +100,7 @@ template<typename ClassType,
     typename PropertyType,
     typename ReferenceColumnType,
     typename... ReferenceProperties>
-auto REFLECTIONAPI_EXPORT make_reference_property(
+auto make_reference_property(
     std::string name,
     Helper::Setter_t<ClassType, PropertyType>&& setter,
     Helper::ConstGetter_t<ClassType, PropertyType>&& getter,
@@ -118,7 +117,7 @@ template<typename ClassType,
     typename PropertyType,
     typename ReferenceColumnType,
     typename... ReferenceProperties>
-auto REFLECTIONAPI_EXPORT make_reference_property(
+auto make_reference_property(
     std::string name,
     Helper::Setter_t<ClassType, PropertyType>&& setter,
     Helper::MutableGetter_t<ClassType, PropertyType>&& getter,
@@ -135,7 +134,7 @@ template<typename ClassType,
     typename PropertyType,
     typename ReferenceColumnType,
     typename... ReferenceProperties>
-auto REFLECTIONAPI_EXPORT make_reference_property(
+auto make_reference_property(
     std::string name,
     Helper::Setter_t<ClassType, PropertyType> setter,
     Helper::Getter_t<ClassType, PropertyType> getter,
@@ -154,7 +153,7 @@ template<typename ClassType,
     typename PropertyType,
     typename ReferenceColumnType,
     typename... ReferenceProperties>
-auto REFLECTIONAPI_EXPORT make_reference_property(
+auto make_reference_property(
     std::string name,
     Helper::BaseSetter_t<ClassType, PropertyType>&& setter,
     Helper::ConstGetter_t<ClassType, PropertyType>&& getter,
@@ -171,7 +170,7 @@ template<typename ClassType,
     typename PropertyType,
     typename ReferenceColumnType,
     typename... ReferenceProperties>
-auto REFLECTIONAPI_EXPORT make_reference_property(
+auto make_reference_property(
     std::string name,
     Helper::BaseSetter_t<ClassType, PropertyType>&& setter,
     Helper::MutableGetter_t<ClassType, PropertyType>&& getter,
@@ -188,7 +187,7 @@ template<typename ClassType,
     typename PropertyType,
     typename ReferenceColumnType,
     typename... ReferenceProperties>
-auto REFLECTIONAPI_EXPORT make_reference_property(
+auto make_reference_property(
     std::string name,
     Helper::BaseSetter_t<ClassType, PropertyType> setter,
     Helper::Getter_t<ClassType, PropertyType> getter,

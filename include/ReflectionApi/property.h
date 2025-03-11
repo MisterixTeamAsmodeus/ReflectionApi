@@ -2,6 +2,7 @@
 
 #include "helper/templates.h"
 
+#include <stdexcept>
 #include <string>
 
 namespace ReflectionApi {
@@ -97,6 +98,15 @@ public:
             (classValue.*_setter)(data);
         else
             classValue.*_variable = data;
+    }
+
+    /**
+     * @brief Заглушка для работы рефлексии
+     */
+    template<typename Type>
+    void set_value(ClassType& /*classValue*/, const Type& /*data*/)
+    {
+        throw std::invalid_argument("type is not valid");
     }
 
     /**

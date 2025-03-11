@@ -5,13 +5,17 @@
 struct Test
 {
     int a = 0;
+    std::string b;
 };
 
 int main()
 {
     using namespace ReflectionApi;
 
-    auto entity = make_entity<Test>(make_property("a", &Test::a));
+    auto entity = make_entity<Test>(
+        make_property("a", &Test::a),
+        make_property("b", &Test::b)
+        );
 
     Test t {};
 

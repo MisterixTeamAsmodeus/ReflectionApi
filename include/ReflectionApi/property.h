@@ -1,5 +1,6 @@
 #pragma once
 
+#include "converterhelper.h"
 #include "helper/templates.h"
 
 #include <stdexcept>
@@ -130,6 +131,16 @@ public:
         return _name;
     }
 
+    std::shared_ptr<Converter<PropertyType>> converter() const
+    {
+        return _converter;
+    }
+
+    void set_converter(const std::shared_ptr<Converter<PropertyType>>& converter)
+    {
+        _converter = converter;
+    }
+
 private:
     /**
      * @brief Строка, хранящая имя переменной.
@@ -153,6 +164,8 @@ private:
      * Если указатель равен nullptr, то значение переменной устанавливается через член-переменную.
      */
     Setter _setter = nullptr;
+
+    std::shared_ptr<Converter<PropertyType>> _converter = std::make_shared<Converter<PropertyType>>();
 };
 
 template<typename ClassType, typename PropertyType>

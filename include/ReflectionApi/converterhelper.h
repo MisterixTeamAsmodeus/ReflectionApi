@@ -29,7 +29,7 @@ public:
 };
 
 template<>
-class Converter<bool>
+class Converter<bool> final
 {
 public:
     ~Converter() = default;
@@ -44,6 +44,68 @@ public:
     std::string convertToString(const bool& value) const
     {
         return value ? "true" : "false";
+    }
+};
+
+template<typename T>
+class Converter<std::shared_ptr<T>> final
+{
+public:
+    ~Converter() = default;
+
+    void fillFromString(std::shared_ptr<T>& value, const std::string& str) const
+    {
+        if(str.empty())
+            return;
+
+        if(value == nullptr)
+            value = std::make_shared<T>();
+
+        std::stringstream stream;
+        stream << str;
+        stream >> *value;
+    }
+
+    std::string convertToString(const std::shared_ptr<T>& value) const
+    {
+        if(value == nullptr)
+            return "";
+
+        std::stringstream stream;
+        stream << *value;
+
+        return stream.str();
+    }
+};
+
+template<typename T>
+class Converter<std::unique_ptr<T>> final
+{
+public:
+    ~Converter() = default;
+
+    void fillFromString(std::unique_ptr<T>& value, const std::string& str) const
+    {
+        if(str.empty())
+            return;
+
+        if(value == nullptr)
+            value = std::make_unique<T>();
+
+        std::stringstream stream;
+        stream << str;
+        stream >> *value;
+    }
+
+    std::string convertToString(const std::unique_ptr<T>& value) const
+    {
+        if(value == nullptr)
+            return "";
+
+        std::stringstream stream;
+        stream << *value;
+
+        return stream.str();
     }
 };
 

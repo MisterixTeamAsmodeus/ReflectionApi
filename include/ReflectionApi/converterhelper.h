@@ -1,10 +1,44 @@
 #pragma once
 
-#include <iostream>
+#include "helper/sfinae.h"
+
 #include <sstream>
 #include <string>
 
 namespace ReflectionApi {
+
+namespace Impl {
+
+template<typename T, std::enable_if_t<SFINAE::has_right_shift_operator_v<T>, bool> = true>
+void fillFromString(T& value, const std::string& str)
+{
+    std::stringstream stream;
+    stream << str;
+    stream >> value;
+}
+
+template<typename T, std::enable_if_t<!SFINAE::has_right_shift_operator_v<T>, bool> = true>
+void fillFromString(T&, const std::string&)
+{
+    throw std::runtime_error("fillFromString not implemented");
+}
+
+template<typename T, std::enable_if_t<SFINAE::has_left_shift_operator_v<T>, bool> = true>
+std::string convertToString(const T& value)
+{
+    std::stringstream stream;
+    stream << value;
+
+    return stream.str();
+}
+
+template<typename T, std::enable_if_t<!SFINAE::has_left_shift_operator_v<T>, bool> = true>
+std::string convertToString(const T&)
+{
+    throw std::runtime_error("convertToString not implemented");
+}
+
+} // namespace Impl
 
 template<typename T>
 class Converter
@@ -14,17 +48,12 @@ public:
 
     virtual void fillFromString(T& value, const std::string& str) const
     {
-        std::stringstream stream;
-        stream << str;
-        stream >> value;
+        Impl::fillFromString<T>(value, str);
     }
 
     virtual std::string convertToString(const T& value) const
     {
-        std::stringstream stream;
-        stream << value;
-
-        return stream.str();
+        return Impl::convertToString<T>(value);
     }
 };
 

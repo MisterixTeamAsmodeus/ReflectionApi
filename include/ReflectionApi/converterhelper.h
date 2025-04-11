@@ -76,6 +76,23 @@ public:
     }
 };
 
+template<>
+class Converter<std::string> final
+{
+public:
+    ~Converter() = default;
+
+    void fillFromString(std::string& value, const std::string& str) const
+    {
+        value = str;
+    }
+
+    std::string convertToString(const std::string& value) const
+    {
+        return value;
+    }
+};
+
 template<typename T>
 class Converter<std::shared_ptr<T>> final
 {

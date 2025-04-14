@@ -122,6 +122,15 @@ public:
     }
 
     /**
+     * @brief Заглушка для работы рефлексии
+     */
+    template<typename Type>
+    PropertyType value(const Type& /*classValue*/) const
+    {
+        throw std::invalid_argument("type is not valid");
+    }
+
+    /**
      * @brief Получает имя переменной.
      *
      * @return Имя переменной.

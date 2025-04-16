@@ -6,7 +6,6 @@
 #include <string>
 
 namespace ReflectionApi {
-
 namespace Impl {
 
 template<typename T, std::enable_if_t<SFINAE::has_right_shift_operator_v<T>, bool> = true>

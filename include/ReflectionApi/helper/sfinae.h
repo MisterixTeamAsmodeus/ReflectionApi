@@ -1,8 +1,8 @@
 #pragma once
 
+#include <iostream>
 #include <type_traits>
 #include <utility>
-#include <iostream>
 
 namespace ReflectionApi {
 namespace SFINAE {
@@ -37,5 +37,7 @@ struct has_right_shift_operator<T, std::void_t<decltype((std::declval<std::istre
 template<typename T>
 constexpr bool has_right_shift_operator_v = has_right_shift_operator<T>::value;
 
-}
-}
+
+
+} // namespace SFINAE
+} // namespace ReflectionApi

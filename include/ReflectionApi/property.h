@@ -52,6 +52,7 @@ public:
         , _variable(other._variable)
         , _getter(other._getter)
         , _setter(other._setter)
+        , _converter(other._converter)
     {
     }
 
@@ -60,6 +61,7 @@ public:
         , _variable(other._variable)
         , _getter(std::move(other._getter))
         , _setter(std::move(other._setter))
+        , _converter(std::move(other._converter))
     {
     }
 
@@ -73,6 +75,7 @@ public:
         _variable = other._variable;
         _getter = other._getter;
         _setter = other._setter;
+        _converter = other._converter;
         return *this;
     }
 
@@ -84,6 +87,7 @@ public:
         _variable = other._variable;
         _getter = std::move(other._getter);
         _setter = std::move(other._setter);
+        _converter = std::move(other._converter);
         return *this;
     }
 

@@ -10,21 +10,15 @@ namespace ReflectionApi {
 namespace Impl {
 
 template<typename T, std::enable_if_t<SFINAE::has_right_shift_operator_v<T>, bool> = true>
-void fillFromString(T& value, const std::string& str)
+void fillFromString(T& value, const std::string& str, int)
 {
     std::stringstream stream;
     stream << str;
     stream >> value;
 }
 
-template<typename T, std::enable_if_t<!SFINAE::has_right_shift_operator_v<T>, bool> = true>
-void fillFromString(T&, const std::string&)
-{
-    throw std::runtime_error("fillFromString not implemented");
-}
-
 template<typename T, std::enable_if_t<SFINAE::has_left_shift_operator_v<T>, bool> = true>
-std::string convertToString(const T& value)
+std::string convertToString(const T& value, int)
 {
     std::stringstream stream;
     stream << value;
@@ -32,8 +26,14 @@ std::string convertToString(const T& value)
     return stream.str();
 }
 
-template<typename T, std::enable_if_t<!SFINAE::has_left_shift_operator_v<T>, bool> = true>
-std::string convertToString(const T&)
+template<typename T>
+void fillFromString(T&, const std::string&, ...)
+{
+    throw std::runtime_error("fillFromString not implemented");
+}
+
+template<typename T>
+std::string convertToString(const T&, ...)
 {
     throw std::runtime_error("convertToString not implemented");
 }
@@ -48,12 +48,12 @@ public:
 
     virtual void fillFromString(T& value, const std::string& str) const
     {
-        Impl::fillFromString<T>(value, str);
+        Impl::fillFromString<T>(value, str, 0);
     }
 
     virtual std::string convertToString(const T& value) const
     {
-        return Impl::convertToString<T>(value);
+        return Impl::convertToString<T>(value, 0);
     }
 };
 

@@ -97,7 +97,8 @@ public:
      * @param classValue Объект, в котором находится переменная.
      * @param data Новое значение переменной.
      */
-    void set_value(ClassType& classValue, const PropertyType& data)
+    template<typename Type>
+    void set_value(ClassType& classValue, const Type& data)
     {
         if(_variable == nullptr)
             (classValue.*_setter)(data);
@@ -106,32 +107,15 @@ public:
     }
 
     /**
-     * @brief Заглушка для работы рефлексии
-     */
-    template<typename Type>
-    void set_value(ClassType& /*classValue*/, const Type& /*data*/)
-    {
-        throw std::invalid_argument("type is not valid");
-    }
-
-    /**
      * @brief Получает значение переменной.
      *
      * @param classValue Объект, в котором находится переменная.
      * @return Значение переменной.
      */
-    PropertyType value(const ClassType& classValue) const
+    template<typename Type>
+    PropertyType value(const Type& classValue) const
     {
         return _variable == nullptr ? (classValue.*_getter)() : classValue.*_variable;
-    }
-
-    /**
-     * @brief Заглушка для работы рефлексии
-     */
-    template<typename Type>
-    PropertyType value(const Type& /*classValue*/) const
-    {
-        throw std::invalid_argument("type is not valid");
     }
 
     /**

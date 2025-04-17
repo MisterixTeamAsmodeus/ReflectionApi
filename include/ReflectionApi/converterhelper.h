@@ -57,7 +57,7 @@ public:
 };
 
 template<>
-class Converter<bool> final
+class Converter<bool>
 {
 public:
     ~Converter() = default;
@@ -76,7 +76,7 @@ public:
 };
 
 template<>
-class Converter<std::string> final
+class Converter<std::string>
 {
 public:
     ~Converter() = default;
@@ -93,7 +93,7 @@ public:
 };
 
 template<typename T>
-class Converter<std::shared_ptr<T>> final
+class Converter<std::shared_ptr<T>>
 {
 public:
     ~Converter() = default;
@@ -124,7 +124,7 @@ public:
 };
 
 template<typename T>
-class Converter<std::unique_ptr<T>> final
+class Converter<std::unique_ptr<T>>
 {
 public:
     ~Converter() = default;

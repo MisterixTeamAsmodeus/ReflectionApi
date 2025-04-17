@@ -2,9 +2,9 @@
 
 #include "helper/sfinae.h"
 
+#include <memory>
 #include <sstream>
 #include <string>
-#include <memory>
 
 namespace ReflectionApi {
 namespace Impl {
@@ -58,48 +58,48 @@ public:
 };
 
 template<>
-class Converter<bool> final
+class Converter<bool>
 {
 public:
-    ~Converter() = default;
+    virtual ~Converter() = default;
 
-    void fillFromString(bool& value, const std::string& str) const
+    virtual void fillFromString(bool& value, const std::string& str) const
     {
         std::stringstream stream;
         stream << str;
         stream >> std::boolalpha >> value;
     }
 
-    std::string convertToString(const bool& value) const
+    virtual std::string convertToString(const bool& value) const
     {
         return value ? "true" : "false";
     }
 };
 
 template<>
-class Converter<std::string> final
+class Converter<std::string>
 {
 public:
-    ~Converter() = default;
+    virtual ~Converter() = default;
 
-    void fillFromString(std::string& value, const std::string& str) const
+    virtual void fillFromString(std::string& value, const std::string& str) const
     {
         value = str;
     }
 
-    std::string convertToString(const std::string& value) const
+    virtual std::string convertToString(const std::string& value) const
     {
         return value;
     }
 };
 
 template<typename T>
-class Converter<std::shared_ptr<T>> final
+class Converter<std::shared_ptr<T>>
 {
 public:
-    ~Converter() = default;
+    virtual ~Converter() = default;
 
-    void fillFromString(std::shared_ptr<T>& value, const std::string& str) const
+    virtual void fillFromString(std::shared_ptr<T>& value, const std::string& str) const
     {
         if(str.empty())
             return;
@@ -112,7 +112,7 @@ public:
         stream >> *value;
     }
 
-    std::string convertToString(const std::shared_ptr<T>& value) const
+    virtual std::string convertToString(const std::shared_ptr<T>& value) const
     {
         if(value == nullptr)
             return "";
@@ -125,12 +125,12 @@ public:
 };
 
 template<typename T>
-class Converter<std::unique_ptr<T>> final
+class Converter<std::unique_ptr<T>>
 {
 public:
-    ~Converter() = default;
+    virtual ~Converter() = default;
 
-    void fillFromString(std::unique_ptr<T>& value, const std::string& str) const
+    virtual void fillFromString(std::unique_ptr<T>& value, const std::string& str) const
     {
         if(str.empty())
             return;
@@ -143,7 +143,7 @@ public:
         stream >> *value;
     }
 
-    std::string convertToString(const std::unique_ptr<T>& value) const
+    virtual std::string convertToString(const std::unique_ptr<T>& value) const
     {
         if(value == nullptr)
             return "";

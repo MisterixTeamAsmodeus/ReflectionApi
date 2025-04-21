@@ -18,7 +18,7 @@ public:
         typename PropertyType,
         typename Setter,
         typename Getter>
-    void operator()(Property<ClassType, PropertyType, Setter, Getter>& property)
+    void operator()(Property<ClassType, PropertyType, Setter, Getter>& /*property*/)
     {
     }
 

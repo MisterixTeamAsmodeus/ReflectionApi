@@ -63,4 +63,4 @@ template<typename ClassType, typename PropertyType>
 using Variable_t = PropertyType ClassType::*;
 
 } // namespace Helper
-} // namespace ReflectionApi
+} // namespace reflection_api

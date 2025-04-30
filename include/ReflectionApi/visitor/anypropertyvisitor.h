@@ -2,14 +2,17 @@
 
 #include "ReflectionApi/referenceproperty.h"
 
-namespace ReflectionApi {
-namespace Visitor {
+namespace reflection_api {
+namespace visitor {
 
+/**
+ * Визитор для любых типов проперти
+ */
 template<typename PropertyAction, typename ReferencePropertyAction>
-class AnyPropertyVisitor
+class any_property_visitor
 {
 public:
-    explicit AnyPropertyVisitor(const PropertyAction& property_action, const ReferencePropertyAction& reference_property_action)
+    explicit any_property_visitor(const PropertyAction& property_action, const ReferencePropertyAction& reference_property_action)
         : _property_action(property_action)
         , _reference_property_action(reference_property_action)
     {
@@ -19,7 +22,7 @@ public:
         typename PropertyType,
         typename Setter,
         typename Getter>
-    void operator()(Property<ClassType, PropertyType, Setter, Getter>& property)
+    void operator()(property<ClassType, PropertyType, Setter, Getter>& property)
     {
         _property_action(property);
     }
@@ -30,13 +33,15 @@ public:
         typename Setter,
         typename Getter,
         typename... ReferenceProperties>
-    void operator()(ReferenceProperty<ClassType, PropertyType, ReferenceColumnType, Setter, Getter, ReferenceProperties...>& reference_property)
+    void operator()(reference_property<ClassType, PropertyType, ReferenceColumnType, Setter, Getter, ReferenceProperties...>& reference_property)
     {
         _reference_property_action(reference_property);
     }
 
 private:
+    /// Действие которое сработает для обычной проперти
     PropertyAction _property_action;
+    /// Действие которое сработает для ссылочной проперти
     ReferencePropertyAction _reference_property_action;
 };
 
@@ -45,10 +50,10 @@ auto make_any_property_visitor(
     PropertyAction&& property_action,
     ReferencePropertyAction&& reference_property_action)
 {
-    return AnyPropertyVisitor<PropertyAction, ReferencePropertyAction>(
+    return any_property_visitor<PropertyAction, ReferencePropertyAction>(
         std::forward<PropertyAction>(property_action),
         std::forward<ReferencePropertyAction>(reference_property_action));
 }
 
-} // namespace Visitor
-} // namespace ReflectionApi
+} // namespace visitor
+} // namespace reflection_api

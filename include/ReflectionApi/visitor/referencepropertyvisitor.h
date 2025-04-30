@@ -2,9 +2,12 @@
 
 #include "ReflectionApi/referenceproperty.h"
 
-namespace ReflectionApi {
-namespace Visitor {
+namespace reflection_api {
+namespace visitor {
 
+/**
+ * Визитор для ссылочных типов проперти
+ */
 template<typename ReferencePropertyAction>
 class ReferencePropertyVisitor
 {
@@ -18,7 +21,7 @@ public:
         typename PropertyType,
         typename Setter,
         typename Getter>
-    void operator()(Property<ClassType, PropertyType, Setter, Getter>& /*property*/)
+    void operator()(property<ClassType, PropertyType, Setter, Getter>& /*property*/)
     {
     }
 
@@ -28,12 +31,13 @@ public:
         typename Setter,
         typename Getter,
         typename... ReferenceProperties>
-    void operator()(ReferenceProperty<ClassType, PropertyType, ReferenceColumnType, Setter, Getter, ReferenceProperties...>& reference_property)
+    void operator()(reference_property<ClassType, PropertyType, ReferenceColumnType, Setter, Getter, ReferenceProperties...>& reference_property)
     {
         _reference_property_action(reference_property);
     }
 
 private:
+    /// Действие которое сработает для ссылочной проперти
     ReferencePropertyAction _reference_property_action;
 };
 
@@ -43,5 +47,5 @@ auto make_reference_property_visitor(ReferencePropertyAction&& reference_propert
     return ReferencePropertyVisitor<ReferencePropertyAction>(std::forward<ReferencePropertyAction>(reference_property_action));
 }
 
-} // namespace Visitor
-} // namespace ReflectionApi
+} // namespace visitor
+} // namespace reflection_api

@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+// Работа с данными используя ссылки на get и set с использованием ссылочных проперти
+
 class Test
 {
 public:
@@ -37,10 +39,10 @@ private:
 };
 
 int main()
-
 {
-    using namespace ReflectionApi;
+    using namespace reflection_api;
 
+    // Объявление обобщённой сущности
     const auto inline_entity = make_entity<Test>(
         make_property("a", &Test::set_a, &Test::get_a));
     auto entity = make_entity<ParentItem>(
@@ -48,11 +50,11 @@ int main()
 
     ParentItem p {};
 
-    // get value
+    // Получение значения поля "a" используя обобщённый доступ
     std::cout << p.get_t().get_a() << " - ";
-    entity.visit_property("t", Visitor::make_reference_property_visitor([&p](const auto& property) {
+    entity.visit_property("t", visitor::make_reference_property_visitor([&p](const auto& property) {
         const auto value = property.value(p);
-        auto inlineEntity = property.entity();
+        auto inlineEntity = property.reference_entity();
 
         inlineEntity.visit_property("a", [&p, value](const auto& inline_property) {
             std::cout << inline_property.value(value);
@@ -63,10 +65,10 @@ int main()
 
     std::cout << "\n";
 
-    // set value
-    entity.visit_property("t", Visitor::make_reference_property_visitor([&p](auto& property) {
+    // Изменение значения поля "a" используя обобщённый доступ
+    entity.visit_property("t", visitor::make_reference_property_visitor([&p](auto& property) {
         auto value = property.value(p);
-        auto inlineEntity = property.entity();
+        auto inlineEntity = property.reference_entity();
 
         inlineEntity.visit_property("a", [&p, &value](auto& inline_property) {
             std::cout << "set value in inline entity with reflection. value = " << 6 << "\n";

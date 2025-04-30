@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 set(reflection_api_project_name ReflectionApi)
-option(REFLECTION_API_EXAMPLE "Add ReflectionApi examples file as executable (on|off)" OFF )
+option(REFLECTION_API_EXAMPLE "Add ReflectionApi examples file as executable (on|off)" OFF)
 
 project(${reflection_api_project_name} LANGUAGES CXX)
 
@@ -16,13 +16,6 @@ set_target_properties(${PROJECT_NAME}
         PROPERTIES
         OUTPUT_NAME ${PROJECT_NAME}
 )
-
-if(${WIN32})
-    set_target_properties(${PROJECT_NAME}
-            PROPERTIES
-            WINDOWS_EXPORT_ALL_SYMBOLS ON
-    )
-endif ()
 
 target_include_directories(${PROJECT_NAME} PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -39,6 +32,6 @@ install(DIRECTORY include
         DESTINATION include
 )
 
-if(${REFLECTION_API_EXAMPLE})
+if (${REFLECTION_API_EXAMPLE})
     add_subdirectory(example)
 endif ()

@@ -4,7 +4,7 @@ project("${reflection_api_project_name}Example" LANGUAGES CXX)
 
 file(GLOB_RECURSE EXAMPLE_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 
-foreach(EXAMPLE_SOURCE_FILE ${EXAMPLE_SOURCE_FILES})
+foreach (EXAMPLE_SOURCE_FILE ${EXAMPLE_SOURCE_FILES})
     get_filename_component(EXAMPLE_NAME ${EXAMPLE_SOURCE_FILE} NAME_WE)
 
     set(EXAMPLE_TARGET "${reflection_api_project_name}_${EXAMPLE_NAME}")
@@ -13,4 +13,4 @@ foreach(EXAMPLE_SOURCE_FILE ${EXAMPLE_SOURCE_FILES})
 
     target_compile_features(${EXAMPLE_TARGET} PUBLIC cxx_std_14)
     target_link_libraries(${EXAMPLE_TARGET} PRIVATE ${reflection_api_project_name})
-endforeach()
+endforeach ()

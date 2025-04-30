@@ -3,6 +3,8 @@
 #include <iostream>
 #include <string>
 
+// Реализация рекурсивного обхода по всем проперти в сущности
+
 struct Test
 {
     int a = 5;
@@ -18,23 +20,24 @@ struct ParentItem
 };
 
 template<typename ClassType, typename Entity, typename PropertyAction>
-void visitAllProperty(ClassType&& visitor, Entity&& entity, PropertyAction&& property_action)
+void visit_all_property(ClassType&& visitor, Entity&& entity, PropertyAction&& property_action)
 {
-    using namespace ReflectionApi;
+    using namespace reflection_api;
 
-    entity.for_each(Visitor::make_any_property_visitor(
+    entity.for_each(visitor::make_any_property_visitor(
         [&](const auto& property) {
             property_action(std::forward<ClassType>(visitor), std::forward<decltype(property)>(property));
         },
         [&](const auto& reference_property) {
-            visitAllProperty(reference_property.value(std::forward<ClassType>(visitor)), reference_property.entity(), std::forward<PropertyAction>(property_action));
+            visit_all_property(reference_property.value(std::forward<ClassType>(visitor)), reference_property.reference_entity(), std::forward<PropertyAction>(property_action));
         }));
 }
 
 int main()
 {
-    using namespace ReflectionApi;
+    using namespace reflection_api;
 
+    // Объявление обобщённой сущности
     const auto inline_entity = make_entity<Test>(
         make_property("inline_a", &Test::a),
         make_property("inline_b", &Test::b),
@@ -57,7 +60,7 @@ int main()
 
     std::cout << "visit property with recursive"
               << "\n";
-    visitAllProperty(p, entity, [](const auto& visitor, const auto& property) {
+    visit_all_property(p, entity, [](const auto& visitor, const auto& property) {
         std::cout << "property name - " << property.name() << " property value - " << property.value(visitor) << "\n";
     });
 }

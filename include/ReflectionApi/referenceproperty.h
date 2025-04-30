@@ -4,146 +4,142 @@
 #include "helper/templates.h"
 #include "property.h"
 
-namespace ReflectionApi {
+namespace reflection_api {
 
+/**
+ * Сущность отвечающая за представление ссылочной проперти в классе
+ * @tparam ClassType Тип класса в котором находится проперти
+ * @tparam PropertyType Тип проперти
+ */
 template<typename ClassType,
     typename PropertyType,
-    typename ReferenceColumnType,
     typename Setter,
     typename Getter,
     typename... ReferenceProperties>
-class ReferenceProperty final : public Property<ClassType, PropertyType, Setter, Getter>
+class reference_property final : public property<ClassType, PropertyType, Setter, Getter>
 {
 public:
-    static PropertyType get_empty_reference_variable()
-    {
-        return ReferenceColumnType();
-    }
-
-public:
-    explicit ReferenceProperty(
+    explicit reference_property(
         std::string name,
-        const Helper::Variable_t<ClassType, PropertyType>& variable,
-        const Entity<ReferenceColumnType, ReferenceProperties...>& entity)
-        : Property<ClassType, PropertyType, Setter, Getter>(name, variable)
-        , _entity(entity)
+        const helper::Variable_t<ClassType, PropertyType>& variable,
+        const entity<PropertyType, ReferenceProperties...>& entity)
+        : property<ClassType, PropertyType, Setter, Getter>(name, variable)
+        , _reference_entity(entity)
     {
     }
 
-    explicit ReferenceProperty(
+    explicit reference_property(
         std::string name,
         Setter setter,
         Getter getter,
-        const Entity<ReferenceColumnType, ReferenceProperties...>& entity)
-        : Property<ClassType, PropertyType, Setter, Getter>(name, setter, getter)
-        , _entity(entity)
+        const entity<PropertyType, ReferenceProperties...>& entity)
+        : property<ClassType, PropertyType, Setter, Getter>(name, setter, getter)
+        , _reference_entity(entity)
     {
     }
 
-    ReferenceProperty(const ReferenceProperty& other)
-        : Property<ClassType, PropertyType, Setter, Getter>(other)
-        , _entity(other._entity)
+    reference_property(const reference_property& other)
+        : property<ClassType, PropertyType, Setter, Getter>(other)
+        , _reference_entity(other._entity)
     {
     }
 
-    ReferenceProperty(ReferenceProperty&& other) noexcept
-        : Property<ClassType, PropertyType, Setter, Getter>(std::move(other))
-        , _entity(std::move(other._entity))
+    reference_property(reference_property&& other) noexcept
+        : property<ClassType, PropertyType, Setter, Getter>(std::move(other))
+        , _reference_entity(std::move(other._reference_entity))
     {
     }
 
-    ~ReferenceProperty() override = default;
+    ~reference_property() override = default;
 
-    ReferenceProperty& operator=(const ReferenceProperty& other)
+    reference_property& operator=(const reference_property& other)
     {
         if(this == &other)
             return *this;
-        Property<ClassType, PropertyType, Setter, Getter>::operator=(other);
-        _entity = other._entity;
+        property<ClassType, PropertyType, Setter, Getter>::operator=(other);
+        _reference_entity = other._entity;
         return *this;
     }
 
-    ReferenceProperty& operator=(ReferenceProperty&& other) noexcept
+    reference_property& operator=(reference_property&& other) noexcept
     {
         if(this == &other)
             return *this;
-        Property<ClassType, PropertyType, Setter, Getter>::operator=(std::move(other));
-        _entity = std::move(other._entity);
+        property<ClassType, PropertyType, Setter, Getter>::operator=(std::move(other));
+        _reference_entity = std::move(other._entity);
         return *this;
     }
 
-    Entity<ReferenceColumnType, ReferenceProperties...> entity() const
+    /// Получить связанную сущность
+    entity<PropertyType, ReferenceProperties...> reference_entity() const
     {
-        return _entity;
+        return _reference_entity;
     }
 
 private:
-    Entity<ReferenceColumnType, ReferenceProperties...> _entity;
+    /// Связанная сущность
+    entity<PropertyType, ReferenceProperties...> _reference_entity;
 };
 
 template<typename ClassType,
     typename PropertyType,
-    typename ReferenceColumnType,
     typename... ReferenceProperties>
 auto make_reference_property(
     std::string name,
-    Helper::Variable_t<ClassType, PropertyType>&& variable,
-    Entity<ReferenceColumnType, ReferenceProperties...> reference_entity)
+    helper::Variable_t<ClassType, PropertyType>&& variable,
+    entity<PropertyType, ReferenceProperties...> reference_entity)
 {
-    return ReferenceProperty<ClassType, PropertyType, ReferenceColumnType, Helper::Setter_t<ClassType, PropertyType>, Helper::ConstGetter_t<ClassType, PropertyType>, ReferenceProperties...>(
+    return reference_property<ClassType, PropertyType, helper::Setter_t<ClassType, PropertyType>, helper::ConstGetter_t<ClassType, PropertyType>, ReferenceProperties...>(
         std::move(name),
-        std::forward<Helper::Variable_t<ClassType, PropertyType>>(variable),
+        std::forward<helper::Variable_t<ClassType, PropertyType>>(variable),
         std::move(reference_entity));
 }
 
 template<typename ClassType,
     typename PropertyType,
-    typename ReferenceColumnType,
     typename... ReferenceProperties>
 auto make_reference_property(
     std::string name,
-    Helper::Setter_t<ClassType, PropertyType>&& setter,
-    Helper::ConstGetter_t<ClassType, PropertyType>&& getter,
-    Entity<ReferenceColumnType, ReferenceProperties...> reference_entity)
+    helper::Setter_t<ClassType, PropertyType>&& setter,
+    helper::ConstGetter_t<ClassType, PropertyType>&& getter,
+    entity<PropertyType, ReferenceProperties...> reference_entity)
 {
-    return ReferenceProperty<ClassType, PropertyType, ReferenceColumnType, Helper::Setter_t<ClassType, PropertyType>, Helper::ConstGetter_t<ClassType, PropertyType>, ReferenceProperties...>(
+    return reference_property<ClassType, PropertyType, helper::Setter_t<ClassType, PropertyType>, helper::ConstGetter_t<ClassType, PropertyType>, ReferenceProperties...>(
         std::move(name),
-        std::forward<Helper::Setter_t<ClassType, PropertyType>>(setter),
-        std::forward<Helper::ConstGetter_t<ClassType, PropertyType>>(getter),
+        std::forward<helper::Setter_t<ClassType, PropertyType>>(setter),
+        std::forward<helper::ConstGetter_t<ClassType, PropertyType>>(getter),
         std::move(reference_entity));
 }
 
 template<typename ClassType,
     typename PropertyType,
-    typename ReferenceColumnType,
     typename... ReferenceProperties>
 auto make_reference_property(
     std::string name,
-    Helper::Setter_t<ClassType, PropertyType>&& setter,
-    Helper::MutableGetter_t<ClassType, PropertyType>&& getter,
-    Entity<ReferenceColumnType, ReferenceProperties...> reference_entity)
+    helper::Setter_t<ClassType, PropertyType>&& setter,
+    helper::MutableGetter_t<ClassType, PropertyType>&& getter,
+    entity<PropertyType, ReferenceProperties...> reference_entity)
 {
-    return ReferenceProperty<ClassType, PropertyType, ReferenceColumnType, Helper::Setter_t<ClassType, PropertyType>, Helper::MutableGetter_t<ClassType, PropertyType>, ReferenceProperties...>(
+    return reference_property<ClassType, PropertyType, helper::Setter_t<ClassType, PropertyType>, helper::MutableGetter_t<ClassType, PropertyType>, ReferenceProperties...>(
         std::move(name),
-        std::forward<Helper::Setter_t<ClassType, PropertyType>>(setter),
-        std::forward<Helper::MutableGetter_t<ClassType, PropertyType>>(getter),
+        std::forward<helper::Setter_t<ClassType, PropertyType>>(setter),
+        std::forward<helper::MutableGetter_t<ClassType, PropertyType>>(getter),
         std::move(reference_entity));
 }
 
 template<typename ClassType,
     typename PropertyType,
-    typename ReferenceColumnType,
     typename... ReferenceProperties>
 auto make_reference_property(
     std::string name,
-    Helper::Setter_t<ClassType, PropertyType> setter,
-    Helper::Getter_t<ClassType, PropertyType> getter,
-    Entity<ReferenceColumnType, ReferenceProperties...> reference_entity)
+    helper::Setter_t<ClassType, PropertyType> setter,
+    helper::Getter_t<ClassType, PropertyType> getter,
+    entity<PropertyType, ReferenceProperties...> reference_entity)
 {
-    return ReferenceProperty<ClassType, PropertyType, ReferenceColumnType, Helper::Setter_t<ClassType, PropertyType>, Helper::Getter_t<ClassType, PropertyType>, ReferenceProperties...>(
+    return reference_property<ClassType, PropertyType, helper::Setter_t<ClassType, PropertyType>, helper::Getter_t<ClassType, PropertyType>, ReferenceProperties...>(
         std::move(name),
-        std::forward<Helper::Setter_t<ClassType, PropertyType>>(setter),
-        std::forward<Helper::Getter_t<ClassType, PropertyType>>(getter),
+        std::forward<helper::Setter_t<ClassType, PropertyType>>(setter),
+        std::forward<helper::Getter_t<ClassType, PropertyType>>(getter),
         std::move(reference_entity));
 }
 
@@ -151,53 +147,50 @@ auto make_reference_property(
 
 template<typename ClassType,
     typename PropertyType,
-    typename ReferenceColumnType,
     typename... ReferenceProperties>
 auto make_reference_property(
     std::string name,
-    Helper::BaseSetter_t<ClassType, PropertyType>&& setter,
-    Helper::ConstGetter_t<ClassType, PropertyType>&& getter,
-    Entity<ReferenceColumnType, ReferenceProperties...> reference_entity)
+    helper::BaseSetter_t<ClassType, PropertyType>&& setter,
+    helper::ConstGetter_t<ClassType, PropertyType>&& getter,
+    entity<PropertyType, ReferenceProperties...> reference_entity)
 {
-    return ReferenceProperty<ClassType, PropertyType, ReferenceColumnType, Helper::BaseSetter_t<ClassType, PropertyType>, Helper::ConstGetter_t<ClassType, PropertyType>, ReferenceProperties...>(
+    return reference_property<ClassType, PropertyType, helper::BaseSetter_t<ClassType, PropertyType>, helper::ConstGetter_t<ClassType, PropertyType>, ReferenceProperties...>(
         std::move(name),
-        std::forward<Helper::BaseSetter_t<ClassType, PropertyType>>(setter),
-        std::forward<Helper::ConstGetter_t<ClassType, PropertyType>>(getter),
+        std::forward<helper::BaseSetter_t<ClassType, PropertyType>>(setter),
+        std::forward<helper::ConstGetter_t<ClassType, PropertyType>>(getter),
         std::move(reference_entity));
 }
 
 template<typename ClassType,
     typename PropertyType,
-    typename ReferenceColumnType,
     typename... ReferenceProperties>
 auto make_reference_property(
     std::string name,
-    Helper::BaseSetter_t<ClassType, PropertyType>&& setter,
-    Helper::MutableGetter_t<ClassType, PropertyType>&& getter,
-    Entity<ReferenceColumnType, ReferenceProperties...> reference_entity)
+    helper::BaseSetter_t<ClassType, PropertyType>&& setter,
+    helper::MutableGetter_t<ClassType, PropertyType>&& getter,
+    entity<PropertyType, ReferenceProperties...> reference_entity)
 {
-    return ReferenceProperty<ClassType, PropertyType, ReferenceColumnType, Helper::BaseSetter_t<ClassType, PropertyType>, Helper::MutableGetter_t<ClassType, PropertyType>, ReferenceProperties...>(
+    return reference_property<ClassType, PropertyType, PropertyType, helper::BaseSetter_t<ClassType, PropertyType>, helper::MutableGetter_t<ClassType, PropertyType>, ReferenceProperties...>(
         std::move(name),
-        std::forward<Helper::BaseSetter_t<ClassType, PropertyType>>(setter),
-        std::forward<Helper::MutableGetter_t<ClassType, PropertyType>>(getter),
+        std::forward<helper::BaseSetter_t<ClassType, PropertyType>>(setter),
+        std::forward<helper::MutableGetter_t<ClassType, PropertyType>>(getter),
         std::move(reference_entity));
 }
 
 template<typename ClassType,
     typename PropertyType,
-    typename ReferenceColumnType,
     typename... ReferenceProperties>
 auto make_reference_property(
     std::string name,
-    Helper::BaseSetter_t<ClassType, PropertyType> setter,
-    Helper::Getter_t<ClassType, PropertyType> getter,
-    Entity<ReferenceColumnType, ReferenceProperties...> reference_entity)
+    helper::BaseSetter_t<ClassType, PropertyType> setter,
+    helper::Getter_t<ClassType, PropertyType> getter,
+    entity<PropertyType, ReferenceProperties...> reference_entity)
 {
-    return ReferenceProperty<ClassType, PropertyType, ReferenceColumnType, Helper::BaseSetter_t<ClassType, PropertyType>, Helper::Getter_t<ClassType, PropertyType>, ReferenceProperties...>(
+    return reference_property<ClassType, PropertyType, helper::BaseSetter_t<ClassType, PropertyType>, helper::Getter_t<ClassType, PropertyType>, ReferenceProperties...>(
         std::move(name),
-        std::forward<Helper::BaseSetter_t<ClassType, PropertyType>>(setter),
-        std::forward<Helper::Getter_t<ClassType, PropertyType>>(getter),
+        std::forward<helper::BaseSetter_t<ClassType, PropertyType>>(setter),
+        std::forward<helper::Getter_t<ClassType, PropertyType>>(getter),
         std::move(reference_entity));
 }
 
-} // namespace ReflectionApi
+} // namespace reflection_api

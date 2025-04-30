@@ -5,34 +5,41 @@
 #include <string>
 #include <tuple>
 
-namespace ReflectionApi {
+namespace reflection_api {
 
+/**
+ * Класс отвечающий за представление обобщенного доступа к любой структуре данных
+ * @note Для использования необходимо, чтобы у объекта был конструктор по умолчанию
+ * @tparam ClassType Тип объекта
+ * @tparam Properties Список пропертей объекта
+ */
 template<typename ClassType, typename... Properties>
-class Entity
+class entity
 {
 public:
+    /// Создать объект сущности
     static ClassType empty_entity()
     {
         return ClassType();
     }
 
 public:
-    explicit Entity(Properties... properties)
+    explicit entity(Properties... properties)
         : _properties(std::make_tuple<Properties...>(std::move(properties)...))
     {
     }
 
-    Entity(const Entity& other)
+    entity(const entity& other)
         : _properties(other._properties)
     {
     }
 
-    Entity(Entity&& other) noexcept
+    entity(entity&& other) noexcept
         : _properties(std::move(other._properties))
     {
     }
 
-    Entity& operator=(const Entity& other)
+    entity& operator=(const entity& other)
     {
         if(this == &other)
             return *this;
@@ -40,7 +47,7 @@ public:
         return *this;
     }
 
-    Entity& operator=(Entity&& other) noexcept
+    entity& operator=(entity&& other) noexcept
     {
         if(this == &other)
             return *this;
@@ -48,10 +55,15 @@ public:
         return *this;
     }
 
+    /**
+     * Выполнить действие над проеперти с заданным названием
+     * @param property_name Название проеперти
+     * @param action Действие которое необходимо выполнить
+     */
     template<typename Action>
     void visit_property(const std::string& property_name, Action&& action)
     {
-        Helper::perform_if(
+        helper::perform_if(
             _properties,
             [&](const auto& column) {
                 return column.name() == property_name;
@@ -59,22 +71,24 @@ public:
             std::forward<Action>(action));
     }
 
+    /// Выполнить действия над всеми проеперти в объекте
     template<typename Action>
     void for_each(Action&& action)
     {
-        Helper::for_each(
+        helper::for_each(
             _properties,
             std::forward<Action>(action));
     }
 
 private:
+    /// Список проерти в сущности
     std::tuple<Properties...> _properties = {};
 };
 
 template<typename ClassType, typename... Properties>
 auto make_entity(Properties&&... properties)
 {
-    return Entity<ClassType, Properties...>(std::move(properties)...);
+    return entity<ClassType, Properties...>(std::move(properties)...);
 }
 
-} // namespace ReflectionApi
+} // namespace reflection_api

@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+// Работа с данными используя ссылки на поля класса
 struct Test
 {
     int a = 0;
@@ -10,16 +11,16 @@ struct Test
 
 int main()
 {
-    using namespace ReflectionApi;
+    using namespace reflection_api;
 
+    // Объявление обобщённой сущности
     auto entity = make_entity<Test>(
         make_property("a", &Test::a),
-        make_property("b", &Test::b)
-        );
+        make_property("b", &Test::b));
 
     Test t {};
 
-    // get value
+    // Получение значения поля "a" используя обобщённый доступ
     std::cout << t.a << " - ";
     entity.visit_property("a", [&t](const auto& property) {
         std::cout << property.value(t);
@@ -29,10 +30,11 @@ int main()
 
     std::cout << "\n";
 
-    // set value
+    // Изменение значения поля "a" используя обобщённый доступ
     entity.visit_property("a", [&t](auto& property) {
         std::cout << "set value with reflection. value = " << 6 << "\n";
         property.set_value(t, 6);
     });
+
     std::cout << "value - " << t.a;
 }

@@ -1,7 +1,7 @@
 #pragma once
 
-namespace ReflectionApi {
-namespace Helper {
+namespace reflection_api {
+namespace helper {
 
 /**
  * @brief Шаблонные псевдонимы типа для указателей на члены-функции, возвращающие значения.

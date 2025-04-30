@@ -3,14 +3,17 @@
 #include "ReflectionApi/property.h"
 #include "ReflectionApi/referenceproperty.h"
 
-namespace ReflectionApi {
-namespace Visitor {
+namespace reflection_api {
+namespace visitor {
 
+/**
+ * Визитор для обычных проперти
+ */
 template<typename PropertyAction>
-class PropertyVisitor
+class property_visitor
 {
 public:
-    explicit PropertyVisitor(const PropertyAction& property_action)
+    explicit property_visitor(const PropertyAction& property_action)
         : _property_action(property_action)
     {
     }
@@ -19,7 +22,7 @@ public:
         typename PropertyType,
         typename Setter,
         typename Getter>
-    void operator()(Property<ClassType, PropertyType, Setter, Getter>& property)
+    void operator()(property<ClassType, PropertyType, Setter, Getter>& property)
     {
         _property_action(property);
     }
@@ -30,19 +33,20 @@ public:
         typename Setter,
         typename Getter,
         typename... ReferenceProperties>
-    void operator()(ReferenceProperty<ClassType, PropertyType, ReferenceColumnType, Setter, Getter, ReferenceProperties...>& /*reference_property*/)
+    void operator()(reference_property<ClassType, PropertyType, ReferenceColumnType, Setter, Getter, ReferenceProperties...>& /*reference_property*/)
     {
     }
 
 private:
+    /// Действие которое сработает для обычной проперти
     PropertyAction _property_action;
 };
 
 template<typename PropertyAction>
 auto make_property_visitor(PropertyAction&& property_action)
 {
-    return PropertyVisitor<PropertyAction>(std::forward<PropertyAction>(property_action));
+    return property_visitor<PropertyAction>(std::forward<PropertyAction>(property_action));
 }
 
-} // namespace Visitor
-} // namespace ReflectionApi
+} // namespace visitor
+} // namespace reflection_api

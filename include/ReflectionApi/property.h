@@ -6,15 +6,21 @@
 #include <stdexcept>
 #include <string>
 
-namespace ReflectionApi {
+namespace reflection_api {
 
+/**
+ * Сущность отвечающая за представление проперти в классе
+ * @tparam ClassType Тип класса в котором находится проперти
+ * @tparam PropertyType Тип проперти
+ */
 template<typename ClassType,
     typename PropertyType,
-    typename Setter = Helper::Setter_t<ClassType, PropertyType>,
-    typename Getter = Helper::ConstGetter_t<ClassType, PropertyType>>
-class Property
+    typename Setter = helper::Setter_t<ClassType, PropertyType>,
+    typename Getter = helper::ConstGetter_t<ClassType, PropertyType>>
+class property
 {
 public:
+    /// Создать объект с типом данных находящейся в сущности
     static PropertyType empty_property()
     {
         return PropertyType();
@@ -27,7 +33,7 @@ public:
      * @param variable Указатель на член-переменную.
      * @param name Имя переменной.
      */
-    explicit Property(std::string name, const Helper::Variable_t<ClassType, PropertyType> variable)
+    explicit property(std::string name, const helper::Variable_t<ClassType, PropertyType> variable)
         : _name(std::move(name))
         , _variable(variable)
     {
@@ -40,34 +46,34 @@ public:
      * @param setter Указатель на член-функцию, устанавливающую значение переменной.
      * @param getter Указатель на член-функцию, получающую значение переменной.
      */
-    explicit Property(std::string name, Setter setter, Getter getter)
+    explicit property(std::string name, Setter setter, Getter getter)
         : _name(std::move(name))
         , _getter(std::move(getter))
         , _setter(std::move(setter))
     {
     }
 
-    Property(const Property& other)
+    property(const property& other)
         : _name(other._name)
         , _variable(other._variable)
         , _getter(other._getter)
         , _setter(other._setter)
-        , _converter(other._converter)
+        , _property_converter(other._property_converter)
     {
     }
 
-    Property(Property&& other) noexcept
+    property(property&& other) noexcept
         : _name(std::move(other._name))
         , _variable(other._variable)
         , _getter(std::move(other._getter))
         , _setter(std::move(other._setter))
-        , _converter(std::move(other._converter))
+        , _property_converter(std::move(other._property_converter))
     {
     }
 
-    virtual ~Property() = default;
+    virtual ~property() = default;
 
-    Property& operator=(const Property& other)
+    property& operator=(const property& other)
     {
         if(this == &other)
             return *this;
@@ -75,11 +81,11 @@ public:
         _variable = other._variable;
         _getter = other._getter;
         _setter = other._setter;
-        _converter = other._converter;
+        _property_converter = other._property_converter;
         return *this;
     }
 
-    Property& operator=(Property&& other) noexcept
+    property& operator=(property&& other) noexcept
     {
         if(this == &other)
             return *this;
@@ -87,7 +93,7 @@ public:
         _variable = other._variable;
         _getter = std::move(other._getter);
         _setter = std::move(other._setter);
-        _converter = std::move(other._converter);
+        _property_converter = std::move(other._property_converter);
         return *this;
     }
 
@@ -144,14 +150,16 @@ public:
         return _name;
     }
 
-    std::shared_ptr<Converter<PropertyType>> converter() const
+    /// Получить объект конвертирующий нужный тип данных из сторки и обратно
+    std::shared_ptr<converter<PropertyType>> property_converter() const
     {
-        return _converter;
+        return _property_converter;
     }
 
-    void set_converter(const std::shared_ptr<Converter<PropertyType>>& converter)
+    /// Установить объект конвертирующий нужный тип данных из сторки и обратно
+    void set_converter(const std::shared_ptr<converter<PropertyType>>& converter)
     {
-        _converter = converter;
+        _property_converter = converter;
     }
 
 private:
@@ -164,7 +172,7 @@ private:
      * @brief Указатель на член-переменную, связанный с этой переменной.
      * Если указатель равен nullptr, то переменная связана с указателями на члены-функции.
      */
-    Helper::Variable_t<ClassType, PropertyType> _variable = nullptr;
+    helper::Variable_t<ClassType, PropertyType> _variable = nullptr;
 
     /**
      * @brief Указатель на член-функцию, получающий значение переменной.
@@ -178,38 +186,27 @@ private:
      */
     Setter _setter = nullptr;
 
-    std::shared_ptr<Converter<PropertyType>> _converter = std::make_shared<Converter<PropertyType>>();
+    /// Объект конвертирующий нужный тип данных из сторки и обратно
+    std::shared_ptr<converter<PropertyType>> _property_converter = std::make_shared<converter<PropertyType>>();
 };
 
 template<typename ClassType, typename PropertyType>
 auto make_property(
     std::string name,
-    Helper::Variable_t<ClassType, PropertyType> variable)
+    helper::Variable_t<ClassType, PropertyType> variable)
 {
-    return Property<ClassType, PropertyType>(
+    return property<ClassType, PropertyType>(
         std::move(name),
-        std::forward<Helper::Variable_t<ClassType, PropertyType>>(variable));
+        std::forward<helper::Variable_t<ClassType, PropertyType>>(variable));
 }
 
 template<typename ClassType, typename PropertyType>
 auto make_property(
     std::string name,
-    Helper::Setter_t<ClassType, PropertyType> setter,
-    Helper::ConstGetter_t<ClassType, PropertyType> getter)
+    helper::Setter_t<ClassType, PropertyType> setter,
+    helper::ConstGetter_t<ClassType, PropertyType> getter)
 {
-    return Property<ClassType, PropertyType>(
-        std::move(name),
-        setter,
-        getter);
-}
-
-template<typename ClassType, typename PropertyType>
-auto make_property(
-    std::string name,
-    Helper::Setter_t<ClassType, PropertyType> setter,
-    Helper::MutableGetter_t<ClassType, PropertyType> getter)
-{
-    return Property<ClassType, PropertyType, Helper::Setter_t<ClassType, PropertyType>, Helper::MutableGetter_t<ClassType, PropertyType>>(
+    return property<ClassType, PropertyType>(
         std::move(name),
         setter,
         getter);
@@ -218,10 +215,22 @@ auto make_property(
 template<typename ClassType, typename PropertyType>
 auto make_property(
     std::string name,
-    Helper::Setter_t<ClassType, PropertyType> setter,
-    Helper::Getter_t<ClassType, PropertyType> getter)
+    helper::Setter_t<ClassType, PropertyType> setter,
+    helper::MutableGetter_t<ClassType, PropertyType> getter)
 {
-    return Property<ClassType, PropertyType, Helper::Setter_t<ClassType, PropertyType>, Helper::Getter_t<ClassType, PropertyType>>(
+    return property<ClassType, PropertyType, helper::Setter_t<ClassType, PropertyType>, helper::MutableGetter_t<ClassType, PropertyType>>(
+        std::move(name),
+        setter,
+        getter);
+}
+
+template<typename ClassType, typename PropertyType>
+auto make_property(
+    std::string name,
+    helper::Setter_t<ClassType, PropertyType> setter,
+    helper::Getter_t<ClassType, PropertyType> getter)
+{
+    return property<ClassType, PropertyType, helper::Setter_t<ClassType, PropertyType>, helper::Getter_t<ClassType, PropertyType>>(
         std::move(name),
         setter,
         getter);
@@ -232,10 +241,10 @@ auto make_property(
 template<typename ClassType, typename PropertyType>
 auto make_property(
     std::string name,
-    Helper::BaseSetter_t<ClassType, PropertyType>&& setter,
-    Helper::ConstGetter_t<ClassType, PropertyType>&& getter)
+    helper::BaseSetter_t<ClassType, PropertyType>&& setter,
+    helper::ConstGetter_t<ClassType, PropertyType>&& getter)
 {
-    return Property<ClassType, PropertyType, Helper::BaseSetter_t<ClassType, PropertyType>>(
+    return property<ClassType, PropertyType, helper::BaseSetter_t<ClassType, PropertyType>>(
         std::move(name),
         setter,
         getter);
@@ -244,10 +253,10 @@ auto make_property(
 template<typename ClassType, typename PropertyType>
 auto make_property(
     std::string name,
-    Helper::BaseSetter_t<ClassType, PropertyType> setter,
-    Helper::MutableGetter_t<ClassType, PropertyType> getter)
+    helper::BaseSetter_t<ClassType, PropertyType> setter,
+    helper::MutableGetter_t<ClassType, PropertyType> getter)
 {
-    return Property<ClassType, PropertyType, Helper::BaseSetter_t<ClassType, PropertyType>, Helper::MutableGetter_t<ClassType, PropertyType>>(
+    return property<ClassType, PropertyType, helper::BaseSetter_t<ClassType, PropertyType>, helper::MutableGetter_t<ClassType, PropertyType>>(
         std::move(name),
         setter,
         getter);
@@ -256,13 +265,13 @@ auto make_property(
 template<typename ClassType, typename PropertyType>
 auto make_property(
     std::string name,
-    Helper::BaseSetter_t<ClassType, PropertyType> setter,
-    Helper::Getter_t<ClassType, PropertyType> getter)
+    helper::BaseSetter_t<ClassType, PropertyType> setter,
+    helper::Getter_t<ClassType, PropertyType> getter)
 {
-    return Property<ClassType, PropertyType, Helper::BaseSetter_t<ClassType, PropertyType>, Helper::Getter_t<ClassType, PropertyType>>(
+    return property<ClassType, PropertyType, helper::BaseSetter_t<ClassType, PropertyType>, helper::Getter_t<ClassType, PropertyType>>(
         std::move(name),
         setter,
         getter);
 }
 
-} // namespace ReflectionApi
+} // namespace reflection_api

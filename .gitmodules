@@ -1,0 +1,3 @@
+[submodule "include/external/TypeConverterApi"]
+	path = include/external/TypeConverterApi
+	url = https://github.com/MisterixTeamAsmodeus/TypeConverterApi.git

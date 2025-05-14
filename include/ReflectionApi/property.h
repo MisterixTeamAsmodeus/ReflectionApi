@@ -1,7 +1,8 @@
 #pragma once
 
-#include "converterhelper.h"
 #include "helper/templates.h"
+
+#include <TypeConverterApi/typeconverterapi.h>
 
 #include <stdexcept>
 #include <string>
@@ -151,13 +152,13 @@ public:
     }
 
     /// Получить объект конвертирующий нужный тип данных из сторки и обратно
-    std::shared_ptr<converter<PropertyType>> property_converter() const
+    std::shared_ptr<type_converter_api::type_converter<PropertyType>> property_converter() const
     {
         return _property_converter;
     }
 
     /// Установить объект конвертирующий нужный тип данных из сторки и обратно
-    void set_converter(const std::shared_ptr<converter<PropertyType>>& converter)
+    void set_converter(const std::shared_ptr<type_converter_api::type_converter<PropertyType>>& converter)
     {
         _property_converter = converter;
     }
@@ -187,7 +188,7 @@ private:
     Setter _setter = nullptr;
 
     /// Объект конвертирующий нужный тип данных из сторки и обратно
-    std::shared_ptr<converter<PropertyType>> _property_converter = std::make_shared<converter<PropertyType>>();
+    std::shared_ptr<type_converter_api::type_converter<PropertyType>> _property_converter = std::make_shared<type_converter_api::type_converter<PropertyType>>();
 };
 
 template<typename ClassType, typename PropertyType>

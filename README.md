@@ -1,59 +1,116 @@
 # ReflectionApi
+## Описание
+ReflectionApi - это современная C++ библиотека (требуется C++14 или новее), предоставляющая механизмы компилируемой рефлексии для работы с классами и их членами. Библиотека позволяет инспектировать и модифицировать поля классов, работать с вложенными структурами и преобразовывать данные между различными представлениями.
 
-ReflectionApi — это библиотека на С++ 14 для реализации компилируемой рефлексии на C++, которая предоставляет обобщённый интерфейс для работы с любыми структурами данных. Она позволяет обращаться к переменным и полям классов
+## Основные возможности
+Рефлексия полей классов:
 
-Для взаимодействия с классом необходимо описать объект entity, куда передать property (ссылки на поля класса)
+1. Доступ к полям через указатели на члены
+   - Поддержка get/set методов
+   - Работа с различными типами свойств (константные, изменяемые)
 
+2. Иерархические структуры:
+   - Поддержка вложенных объектов через reference_property
+   - Рекурсивный обход сложных структур данных
+
+3. Гибкие интерфейсы:
+   - Посетители (visitors) для разных типов свойств
+   - Шаблонные алгоритмы для работы с кортежами свойств
+   - Интеграция с TypeConverterApi для преобразования типов
+
+4. Безопасность типов:
+
+   - Проверки типов на этапе компиляции
+   - Специализации для различных вариантов доступа к данным
+
+## Преимущества
+- Компилируемая рефлексия - вся информация о структурах доступна на этапе компиляции
+- Гибкость - поддержка различных способов доступа к данным (поля, методы)
+- Расширяемость - возможность добавления новых типов свойств и посетителей
+- Производительность - минимум накладных расходов благодаря шаблонной реализации
+
+## Примеры использования
 ```c++
-struct Test
-{
-    int a = 0;
-    std::string b;
+#include "reflectionapi.h"
+
+// Простой класс с полями
+struct Person {
+    int age = 0;
+    std::string name;
 };
 
-auto entity = make_entity<Test>(
-    make_property("a", &Test::a),
-    make_property("b", &Test::b)
-    );
-```
-
-Так же библиотека умеет работать через get и set функции
-
-```c++
-class Test
-{
+// Класс с методами доступа
+class Account {
 public:
-    int get_a() const
-    {
-        return a;
-    }
-
-    void set_a(const int a)
-    {
-        this->a = a;
-    }
-
+    void setBalance(double b) { balance = b; }
+    double getBalance() const { return balance; }
 private:
-    int a = 0;
+    double balance = 0.0;
 };
 
-auto entity = make_entity<Test>(make_property("a", &Test::set_a, &Test::get_a));
+// Вложенная структура
+struct Transaction {
+    double amount;
+    std::string description;
+};
+
+struct BankOperation {
+    Account account;
+    Transaction transaction;
+};
+
+// Создание метаинформации
+auto personEntity = make_entity<Person>(
+    make_property("age", &Person::age),
+    make_property("name", &Person::name)
+);
+
+auto accountEntity = make_entity<Account>(
+    make_property("balance", &Account::setBalance, &Account::getBalance)
+);
+
+auto transactionEntity = make_entity<Transaction>(
+    make_property("amount", &Transaction::amount),
+    make_property("description", &Transaction::description)
+);
+
+auto operationEntity = make_entity<BankOperation>(
+    make_reference_property("account", &BankOperation::account, accountEntity),
+    make_reference_property("transaction", &BankOperation::transaction, transactionEntity)
+);
+
+// Использование
+Person p;
+personEntity.visit_property("age", [&p](auto& prop) {
+    prop.set_value(p, 25); // Установка значения
+});
+
+BankOperation op;
+operationEntity.visit_property("transaction", [&op](auto& prop) {
+    prop.reference_entity().visit_property("amount", [&op](auto& transProp) {
+        transProp.set_value(op.transaction, 100.50); // Установка вложенного свойства
+    });
+});
 ```
 
-Для реализации вложенных структур реализован класс reference_property
+## Требования
+Компилятор с поддержкой C++14 или новее
 
-```c++
-struct Test
-{
-    int a = 0;
-};
+Зависимость от TypeConverterApi для работы с преобразованием типов
 
-struct ParentItem
-{
-    Test t;
-};
+## Установка
+1. Скопируйте заголовочные файлы в ваш проект
 
-auto entity = make_entity<ParentItem>(
-    make_reference_property("t", &ParentItem::t,
-        make_entity<Test>(make_property("a", &Test::a))));
-```
+2. Подключите основной заголовочный файл reflectionapi.h
+
+3. Убедитесь, что TypeConverterApi доступен в путях поиска заголовков
+
+## Лицензия
+Библиотека распространяется под лицензией MIT. Подробности см. в файле LICENSE.
+
+## Документация
+Полная документация доступна в заголовочных файлах и в примерах использования. Основные сущности:
+- **entity** - описание структуры класса
+- **property** - описание поля или свойства класса
+- **reference_property** - описание вложенной структуры
+- **visitor** - обработка разных типов свойств

@@ -9,10 +9,10 @@ namespace visitor {
  * Визитор для ссылочных типов проперти
  */
 template<typename ReferencePropertyAction>
-class ReferencePropertyVisitor
+class reference_property_visitor
 {
 public:
-    explicit ReferencePropertyVisitor(const ReferencePropertyAction& reference_property_action)
+    explicit reference_property_visitor(const ReferencePropertyAction& reference_property_action)
         : _reference_property_action(reference_property_action)
     {
     }
@@ -44,7 +44,7 @@ private:
 template<typename ReferencePropertyAction>
 auto make_reference_property_visitor(ReferencePropertyAction&& reference_property_action)
 {
-    return ReferencePropertyVisitor<ReferencePropertyAction>(std::forward<ReferencePropertyAction>(reference_property_action));
+    return reference_property_visitor<ReferencePropertyAction>(std::forward<ReferencePropertyAction>(reference_property_action));
 }
 
 } // namespace visitor

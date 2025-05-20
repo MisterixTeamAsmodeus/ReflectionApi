@@ -198,7 +198,7 @@ auto make_property(
 {
     return property<ClassType, PropertyType>(
         std::move(name),
-        std::forward<helper::Variable_t<ClassType, PropertyType>>(variable));
+        variable);
 }
 
 template<typename ClassType, typename PropertyType>
@@ -207,7 +207,10 @@ auto make_property(
     helper::Setter_t<ClassType, PropertyType> setter,
     helper::ConstGetter_t<ClassType, PropertyType> getter)
 {
-    return property<ClassType, PropertyType>(
+    return property<ClassType,
+        PropertyType,
+        helper::Setter_t<ClassType, PropertyType>,
+        helper::ConstGetter_t<ClassType, PropertyType>>(
         std::move(name),
         setter,
         getter);
@@ -219,7 +222,10 @@ auto make_property(
     helper::Setter_t<ClassType, PropertyType> setter,
     helper::MutableGetter_t<ClassType, PropertyType> getter)
 {
-    return property<ClassType, PropertyType, helper::Setter_t<ClassType, PropertyType>, helper::MutableGetter_t<ClassType, PropertyType>>(
+    return property<ClassType,
+        PropertyType,
+        helper::Setter_t<ClassType, PropertyType>,
+        helper::MutableGetter_t<ClassType, PropertyType>>(
         std::move(name),
         setter,
         getter);
@@ -231,7 +237,10 @@ auto make_property(
     helper::Setter_t<ClassType, PropertyType> setter,
     helper::Getter_t<ClassType, PropertyType> getter)
 {
-    return property<ClassType, PropertyType, helper::Setter_t<ClassType, PropertyType>, helper::Getter_t<ClassType, PropertyType>>(
+    return property<ClassType,
+        PropertyType,
+        helper::Setter_t<ClassType, PropertyType>,
+        helper::Getter_t<ClassType, PropertyType>>(
         std::move(name),
         setter,
         getter);
@@ -242,10 +251,13 @@ auto make_property(
 template<typename ClassType, typename PropertyType>
 auto make_property(
     std::string name,
-    helper::BaseSetter_t<ClassType, PropertyType>&& setter,
-    helper::ConstGetter_t<ClassType, PropertyType>&& getter)
+    helper::BaseSetter_t<ClassType, PropertyType> setter,
+    helper::ConstGetter_t<ClassType, PropertyType> getter)
 {
-    return property<ClassType, PropertyType, helper::BaseSetter_t<ClassType, PropertyType>>(
+    return property<ClassType,
+        PropertyType,
+        helper::BaseSetter_t<ClassType, PropertyType>,
+        helper::ConstGetter_t<ClassType, PropertyType>>(
         std::move(name),
         setter,
         getter);
@@ -257,7 +269,10 @@ auto make_property(
     helper::BaseSetter_t<ClassType, PropertyType> setter,
     helper::MutableGetter_t<ClassType, PropertyType> getter)
 {
-    return property<ClassType, PropertyType, helper::BaseSetter_t<ClassType, PropertyType>, helper::MutableGetter_t<ClassType, PropertyType>>(
+    return property<ClassType,
+        PropertyType,
+        helper::BaseSetter_t<ClassType, PropertyType>,
+        helper::MutableGetter_t<ClassType, PropertyType>>(
         std::move(name),
         setter,
         getter);
@@ -269,7 +284,10 @@ auto make_property(
     helper::BaseSetter_t<ClassType, PropertyType> setter,
     helper::Getter_t<ClassType, PropertyType> getter)
 {
-    return property<ClassType, PropertyType, helper::BaseSetter_t<ClassType, PropertyType>, helper::Getter_t<ClassType, PropertyType>>(
+    return property<ClassType,
+        PropertyType,
+        helper::BaseSetter_t<ClassType, PropertyType>,
+        helper::Getter_t<ClassType, PropertyType>>(
         std::move(name),
         setter,
         getter);

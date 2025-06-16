@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.8)
 
 set(reflection_api_project_name ReflectionApi)
 option(REFLECTION_API_EXAMPLE "Add ReflectionApi examples file as executable (on|off)" OFF)

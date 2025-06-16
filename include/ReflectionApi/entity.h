@@ -29,31 +29,13 @@ public:
     {
     }
 
-    entity(const entity& other)
-        : _properties(other._properties)
-    {
-    }
+    entity(const entity& other) = default;
+    entity(entity&& other) noexcept = default;
 
-    entity(entity&& other) noexcept
-        : _properties(std::move(other._properties))
-    {
-    }
+    ~entity() = default;
 
-    entity& operator=(const entity& other)
-    {
-        if(this == &other)
-            return *this;
-        _properties = other._properties;
-        return *this;
-    }
-
-    entity& operator=(entity&& other) noexcept
-    {
-        if(this == &other)
-            return *this;
-        _properties = std::move(other._properties);
-        return *this;
-    }
+    entity& operator=(const entity& other) = default;
+    entity& operator=(entity&& other) noexcept = default;
 
     /**
      * Выполнить действие над проеперти с заданным названием

@@ -38,37 +38,13 @@ public:
     {
     }
 
-    reference_property(const reference_property& other)
-        : property<ClassType, PropertyType, Setter, Getter>(other)
-        , _reference_entity(other._entity)
-    {
-    }
-
-    reference_property(reference_property&& other) noexcept
-        : property<ClassType, PropertyType, Setter, Getter>(std::move(other))
-        , _reference_entity(std::move(other._reference_entity))
-    {
-    }
+    reference_property(const reference_property& other) = default;
+    reference_property(reference_property&& other) noexcept = default;
 
     ~reference_property() override = default;
 
-    reference_property& operator=(const reference_property& other)
-    {
-        if(this == &other)
-            return *this;
-        property<ClassType, PropertyType, Setter, Getter>::operator=(other);
-        _reference_entity = other._entity;
-        return *this;
-    }
-
-    reference_property& operator=(reference_property&& other) noexcept
-    {
-        if(this == &other)
-            return *this;
-        property<ClassType, PropertyType, Setter, Getter>::operator=(std::move(other));
-        _reference_entity = std::move(other._entity);
-        return *this;
-    }
+    reference_property& operator=(const reference_property& other) = default;
+    reference_property& operator=(reference_property&& other) noexcept = default;
 
     /// Получить связанную сущность
     entity<PropertyType, ReferenceProperties...> reference_entity() const

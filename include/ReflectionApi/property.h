@@ -54,49 +54,13 @@ public:
     {
     }
 
-    property(const property& other)
-        : _name(other._name)
-        , _variable(other._variable)
-        , _getter(other._getter)
-        , _setter(other._setter)
-        , _property_converter(other._property_converter)
-    {
-    }
-
-    property(property&& other) noexcept
-        : _name(std::move(other._name))
-        , _variable(other._variable)
-        , _getter(std::move(other._getter))
-        , _setter(std::move(other._setter))
-        , _property_converter(std::move(other._property_converter))
-    {
-    }
+    property(const property& other) = default;
+    property(property&& other) noexcept = default;
 
     virtual ~property() = default;
 
-    property& operator=(const property& other)
-    {
-        if(this == &other)
-            return *this;
-        _name = other._name;
-        _variable = other._variable;
-        _getter = other._getter;
-        _setter = other._setter;
-        _property_converter = other._property_converter;
-        return *this;
-    }
-
-    property& operator=(property&& other) noexcept
-    {
-        if(this == &other)
-            return *this;
-        _name = std::move(other._name);
-        _variable = other._variable;
-        _getter = std::move(other._getter);
-        _setter = std::move(other._setter);
-        _property_converter = std::move(other._property_converter);
-        return *this;
-    }
+    property& operator=(const property& other) = default;
+    property& operator=(property&& other) noexcept = default;
 
     /**
      * @brief Устанавливает значение переменной.
@@ -158,9 +122,10 @@ public:
     }
 
     /// Установить объект конвертирующий нужный тип данных из сторки и обратно
-    void set_converter(const std::shared_ptr<type_converter_api::type_converter<PropertyType>>& converter)
+    property& set_converter(const std::shared_ptr<type_converter_api::type_converter<PropertyType>>& converter)
     {
         _property_converter = converter;
+        return *this;
     }
 
 private:

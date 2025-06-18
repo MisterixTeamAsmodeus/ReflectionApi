@@ -122,7 +122,7 @@ public:
     }
 
     /// Установить объект конвертирующий нужный тип данных из сторки и обратно
-    property& set_converter(const std::shared_ptr<type_converter_api::type_converter<PropertyType>>& converter)
+    property set_converter(const std::shared_ptr<type_converter_api::type_converter<PropertyType>>& converter)
     {
         _property_converter = converter;
         return *this;
